@@ -19,6 +19,10 @@ class Cave
     #[ORM\Column(length: 50)]
     private ?string $slug = null;
 
+    #[ORM\ManyToOne(inversedBy: 'cave')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Lot $lot = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +48,18 @@ class Cave
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getLot(): ?Lot
+    {
+        return $this->lot;
+    }
+
+    public function setLot(?Lot $lot): static
+    {
+        $this->lot = $lot;
 
         return $this;
     }

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProprietaireRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProprietaireRepository::class)]
@@ -33,6 +35,18 @@ class Proprietaire
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\OneToMany(mappedBy: 'proprietaire', targetEntity: Lot::class)]
+    private Collection $lots;
+
+    #[ORM\OneToMany(mappedBy: 'proprietaire', targetEntity: Locataire::class)]
+    private Collection $locataire;
+
+    public function __construct()
+    {
+        $this->lots = new ArrayCollection();
+        $this->locataire = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -119,6 +133,66 @@ class Proprietaire
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Lot>
+     */
+    public function getLots(): Collection
+    {
+        return $this->lots;
+    }
+
+    public function addLot(Lot $lot): static
+    {
+        if (!$this->lots->contains($lot)) {
+            $this->lots->add($lot);
+            $lot->setProprietaire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLot(Lot $lot): static
+    {
+        if ($this->lots->removeElement($lot)) {
+            // set the owning side to null (unless already changed)
+            if ($lot->getProprietaire() === $this) {
+                $lot->setProprietaire(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Locataire>
+     */
+    public function getLocataire(): Collection
+    {
+        return $this->locataire;
+    }
+
+    public function addLocataire(Locataire $locataire): static
+    {
+        if (!$this->locataire->contains($locataire)) {
+            $this->locataire->add($locataire);
+            $locataire->setProprietaire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLocataire(Locataire $locataire): static
+    {
+        if ($this->locataire->removeElement($locataire)) {
+            // set the owning side to null (unless already changed)
+            if ($locataire->getProprietaire() === $this) {
+                $locataire->setProprietaire(null);
+            }
+        }
 
         return $this;
     }
