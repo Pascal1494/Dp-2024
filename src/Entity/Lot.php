@@ -40,9 +40,13 @@ class Lot
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
+    #[ORM\OneToMany(mappedBy: 'lot', targetEntity: Badge::class)]
+    private Collection $badge;
+
     public function __construct()
     {
         $this->cave = new ArrayCollection();
+        $this->badge = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -148,6 +152,36 @@ class Lot
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Badge>
+     */
+    public function getBadge(): Collection
+    {
+        return $this->badge;
+    }
+
+    public function addBadge(Badge $badge): static
+    {
+        if (!$this->badge->contains($badge)) {
+            $this->badge->add($badge);
+            $badge->setLot($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBadge(Badge $badge): static
+    {
+        if ($this->badge->removeElement($badge)) {
+            // set the owning side to null (unless already changed)
+            if ($badge->getLot() === $this) {
+                $badge->setLot(null);
+            }
+        }
 
         return $this;
     }

@@ -29,6 +29,10 @@ class Badge
     #[ORM\JoinColumn(nullable: false)]
     private ?Couleur $color = null;
 
+    #[ORM\ManyToOne(inversedBy: 'badge')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Lot $lot = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,6 +94,18 @@ class Badge
     public function setColor(?Couleur $color): static
     {
         $this->color = $color;
+
+        return $this;
+    }
+
+    public function getLot(): ?Lot
+    {
+        return $this->lot;
+    }
+
+    public function setLot(?Lot $lot): static
+    {
+        $this->lot = $lot;
 
         return $this;
     }
