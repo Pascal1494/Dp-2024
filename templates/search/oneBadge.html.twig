@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}rechercher un badge {{badge.reference}} - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>{{badge.reference}}</h1>
+    <h2>{{badge.reference}}</h2>
+    <h2> Ce badge est {{badge.color.name}}</h2>
+    <h2> Il a été créé le {{badge.createdAt |date('d/m/Y')}}</h2>
+    {% if badge.isValid == 1 %}
+      <p>Ce badge est opérationnel</p>
+      {% else %}
+       <p> Ce badge est désactivé</p> 
+    {% endif %}
+    
+    {# <h3>{{badge.isValid}}</h3> #}
+    {# <h3>{{badge.createAt| ('d,m,y')}}</h3> #}
+</div>
+{% endblock %}

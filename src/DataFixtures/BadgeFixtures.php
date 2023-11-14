@@ -50,7 +50,7 @@ class BadgeFixtures extends Fixture implements DependentFixtureInterface
             $manager->persist($badge);
         }
         // dd($badge);
-        dump($couleurs);
+        // dump($couleurs);
 
         $manager->flush();
     }
