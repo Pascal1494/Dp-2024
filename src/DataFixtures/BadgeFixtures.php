@@ -5,24 +5,31 @@ namespace App\DataFixtures;
 use App\Entity\Badge;
 use DateTimeImmutable;
 use App\Entity\Couleur;
+use App\DataFixtures\CouleurFixtures;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-class BadgeFixtures extends Fixture
+
+class BadgeFixtures extends Fixture implements DependentFixtureInterface
 {
 
     public function __construct(SluggerInterface $slugger)
     {
         $this->slugger = $slugger;
+        
+        
     }
 
     private $usedCodes = [];
 
     public function load(ObjectManager $manager): void
     {
-        // Génération des couleurs
-        $couleurs = $this->generateCouleurs($manager);
+        // Récupérer toutes les couleurs depuis le référentiel
+        $couleursRepository = $manager->getRepository(Couleur::class);
+        $couleurs = $couleursRepository->findAll();
+
 
         // Génération des badges
         for ($i = 0; $i < 1500; $i++) {
@@ -34,7 +41,8 @@ class BadgeFixtures extends Fixture
             $this->usedCodes[] = $code;
 
             // Associer aléatoirement une couleur au badge
-            $badge->setColor($this->getRandomCouleur($couleurs));
+            $randomCouleur =$this->getRandomCouleur($couleurs); 
+            $badge->setColor($randomCouleur);
 
             // Définir isValid aléatoirement, avec une probabilité plus élevée pour true
             $badge->setIsValid(random_int(0, 4) > 0); // 4:1 ratio en faveur de true
@@ -42,26 +50,27 @@ class BadgeFixtures extends Fixture
             $manager->persist($badge);
         }
         // dd($badge);
+        dump($couleurs);
 
         $manager->flush();
     }
 
-    private function generateCouleurs(ObjectManager $manager): array
-    {
-        $couleurs = [];
+    // private function generateCouleurs(ObjectManager $manager): array
+    // {
+    //     $couleurs = [];
 
-        // Génération des couleurs
-        for ($i = 0; $i < 10; $i++) {
-            $couleur = new Couleur();
-            $couleur->setName("Couleur " . ($i + 1));
-            $manager->persist($couleur);
-            $couleurs[] = $couleur;
-        }
+    //     // Génération des couleurs
+    //     for ($i = 0; $i < 10; $i++) {
+    //         $couleur = new Couleur();
+    //         $couleur->setName("Couleur " . ($i + 1));
+    //         $manager->persist($couleur);
+    //         $couleurs[] = $couleur;
+    //     }
 
-        $manager->flush();
+    //     $manager->flush();
 
-        return $couleurs;
-    }
+    //     return $couleurs;
+    // }
 
     private function getRandomCouleur(array $couleurs): ?Couleur
     {
@@ -104,5 +113,12 @@ class BadgeFixtures extends Fixture
         $shuffled = str_shuffle($string);
 
         return substr($shuffled, 0, $length);
+    }
+
+    public function getDependencies()
+    {
+        return [
+        CouleurFixtures::class
+        ];
     }
 }
