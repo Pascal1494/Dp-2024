@@ -29,6 +29,9 @@ class Badge
     #[ORM\JoinColumn(nullable: false)]
     private ?Couleur $color = null;
 
+    #[ORM\ManyToOne(inversedBy: 'badges')]
+    private ?Appartement $appartement = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -97,5 +100,17 @@ class Badge
     public function __toString()
     {
         return $this->createdAt;
+    }
+
+    public function getAppartement(): ?Appartement
+    {
+        return $this->appartement;
+    }
+
+    public function setAppartement(?Appartement $appartement): static
+    {
+        $this->appartement = $appartement;
+
+        return $this;
     }
 }

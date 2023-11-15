@@ -19,6 +19,9 @@ class Cave
     #[ORM\Column(length: 50)]
     private ?string $slug = null;
 
+    #[ORM\ManyToOne(inversedBy: 'cave')]
+    private ?Appartement $appartement = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +47,18 @@ class Cave
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getAppartement(): ?Appartement
+    {
+        return $this->appartement;
+    }
+
+    public function setAppartement(?Appartement $appartement): static
+    {
+        $this->appartement = $appartement;
 
         return $this;
     }
