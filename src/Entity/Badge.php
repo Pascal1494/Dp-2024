@@ -29,6 +29,9 @@ class Badge
     #[ORM\JoinColumn(nullable: false)]
     private ?Couleur $color = null;
 
+    #[ORM\OneToOne(mappedBy: 'relation', cascade: ['persist', 'remove'])]
+    private ?OldBadge $oldBadge = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,6 +93,23 @@ class Badge
     public function setColor(?Couleur $color): static
     {
         $this->color = $color;
+
+        return $this;
+    }
+
+    public function getOldBadge(): ?OldBadge
+    {
+        return $this->oldBadge;
+    }
+
+    public function setOldBadge(OldBadge $oldBadge): static
+    {
+        // set the owning side of the relation if necessary
+        if ($oldBadge->getRelation() !== $this) {
+            $oldBadge->setRelation($this);
+        }
+
+        $this->oldBadge = $oldBadge;
 
         return $this;
     }
